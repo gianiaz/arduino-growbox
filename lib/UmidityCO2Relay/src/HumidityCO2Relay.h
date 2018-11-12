@@ -10,7 +10,7 @@ class HumidityCO2Relay
     HumidityCO2Relay(int pinDHT, int pinRelay, int threshold);
     void setUp(bool debug);
     void updateStatus();
-    void setThreshold(int threshold);
+    void setHumidityThreshold(int threshold);
     String getTemperature();
     String getHumidity();
     int getHumidityThreshold();
@@ -24,7 +24,7 @@ class HumidityCO2Relay
     DHT_Unified _dht;
     double _temperature;
     double _humidity;
-    int _threshold;
+    int _humidityThreshold;
     int _tolerance;
     int _toleranceValue;
     int _thick;

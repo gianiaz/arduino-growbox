@@ -10,7 +10,7 @@ HumidityCO2Relay::HumidityCO2Relay(int pinDHT, int pinRelay, int threshold): _dh
   _pinDHT = pinDHT;
   _debug = false;
   _tolerance = 5;
-  _threshold = threshold;
+  _humidityThreshold = threshold;
   _thick = 5000;
   _startTime = millis();
 }
@@ -20,7 +20,7 @@ String HumidityCO2Relay::getTemperature() {
 }
 
 int HumidityCO2Relay::getHumidityThreshold() {
-  return _threshold;
+  return _humidityThreshold;
 }
 
 String HumidityCO2Relay::getHumidity() {
@@ -54,8 +54,8 @@ void HumidityCO2Relay::activateFans(bool activate) {
   }
 }
 
-void HumidityCO2Relay::setThreshold(int threshold) {
-  _threshold = threshold;
+void HumidityCO2Relay::setHumidityThreshold(int threshold) {
+  _humidityThreshold = threshold;
   calculateToleranceValue();
 }
 
@@ -72,22 +72,22 @@ void HumidityCO2Relay::readTemperatureAndHumidity() {
 
   if(_debug) {
     Serial.println("Temperature: "+String(_temperature)+", Humidity: "+_humidity);
-    Serial.println("Threshold: "+String(_threshold)+", Tolerance: "+_toleranceValue);
+    Serial.println("Threshold: "+String(_humidityThreshold)+", Tolerance: "+_toleranceValue);
   }
 }
 
 void HumidityCO2Relay::calculateToleranceValue() {
-  _toleranceValue = (static_cast<double>(_threshold) / 100 ) * static_cast<double>(_tolerance);
+  _toleranceValue = (static_cast<double>(_humidityThreshold) / 100 ) * static_cast<double>(_tolerance);
 }
 
 void HumidityCO2Relay::updateStatus() {
 
   if(millis() > _thick && (millis() - _thick) > _startTime) {
     readTemperatureAndHumidity();
-    if(_humidity > (_threshold + _toleranceValue)) {
+    if(_humidity > (_humidityThreshold + _toleranceValue)) {
       activateFans(true);
     } else {
-      if (_humidity < (_threshold - _toleranceValue)) {
+      if (_humidity < (_humidityThreshold - _toleranceValue)) {
         activateFans(false);
       }
     }

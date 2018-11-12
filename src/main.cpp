@@ -25,6 +25,7 @@
 #define MENU_TEMPERATURE    1
 #define MENU_HYGROMETERS    2
 #define MENU_MODIFY_UMIDITY 3
+#define MENU_MODIFY_TEMPERATURE 4
 
 int actualMenuEntry = 0;
 String line1;
@@ -72,7 +73,7 @@ void substract() {
   switch (actualMenuEntry) {
     case MENU_MODIFY_UMIDITY:
       if(temperatureControl.getHumidityThreshold() >= 5) {
-        temperatureControl.setThreshold(temperatureControl.getHumidityThreshold() - 5);
+        temperatureControl.setHumidityThreshold(temperatureControl.getHumidityThreshold() - 5);
       }
     break;
   }
@@ -84,9 +85,14 @@ void add() {
   switch (actualMenuEntry) {
     case MENU_MODIFY_UMIDITY:
       if(temperatureControl.getHumidityThreshold() <= 95) {
-        temperatureControl.setThreshold(temperatureControl.getHumidityThreshold() + 5);
+        temperatureControl.setHumidityThreshold(temperatureControl.getHumidityThreshold() + 5);
       }
     break;
+    // case MENU_MODIFY_TEMPERATURE:
+    //   if(temperatureControl.getTemperatureThreshold() <= 95) {
+    //     temperatureControl.setThreshold(temperatureControl.getTemperatureThreshold() + 5);
+    //   }
+    // break;
   }
   printMenu();
 
