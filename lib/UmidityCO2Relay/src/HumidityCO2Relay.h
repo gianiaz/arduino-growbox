@@ -27,8 +27,8 @@ class HumidityCO2Relay
     int _humidityThreshold;
     int _tolerance;
     int _toleranceValue;
-    int _thick;
-    int _startTime;
+    long double _thick;
+    long double _startTime;
 
 };
 #endif

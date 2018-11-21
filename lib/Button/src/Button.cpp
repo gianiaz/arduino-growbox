@@ -2,7 +2,7 @@
 #include "Button.h"
 #include "Time.h"
 
-Button::Button(int pin, uint8_t pressMillis) {
+Button::Button(int pin, unsigned long pressMillis) {
   _pin = pin;
   _pressMillis = pressMillis;
   _lastPress = 0;

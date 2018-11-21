@@ -9,7 +9,7 @@ class Hygrometer
     Hygrometer(uint8_t pin, int secondsDelayBetwenLectures);
     void updateStatus();
     void setUp(bool debug);
-    int getHumidity();
+    String getHumidity();
   private:
     int _debug;
     uint8_t _pin;

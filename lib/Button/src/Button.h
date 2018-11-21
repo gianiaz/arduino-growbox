@@ -4,13 +4,13 @@
 class Button
 {
   public:
-    Button(int pin, uint8_t pressMillis);
+    Button(int pin, unsigned long pressMillis);
     void setUp(bool debug);
     bool isPressed();
   private:
     int _pin;
-    uint8_t _pressMillis;
+    unsigned long _pressMillis;
     bool _debug;
-    unsigned int _lastPress;
+    unsigned long _lastPress;
 };
 #endif

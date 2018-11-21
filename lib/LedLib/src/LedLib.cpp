@@ -29,7 +29,7 @@ void setUp() {
 
 }
 
-void LedLib::blink(int duration, int impulse)
+void LedLib::blink(unsigned long duration, unsigned long impulse)
 {
   _expire = now()+ duration;
   _status = "BLINKING";

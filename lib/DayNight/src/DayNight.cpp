@@ -24,6 +24,13 @@ void DayNight::setPosition(int position) {
   _servo.write(position);
 }
 
+String DayNight::isDay() {
+  if(_status == "DAY") {
+    return "1";
+  }
+  return "0";
+}
+
 void DayNight::readPhotoResistor() {
   if(_debug) {
     Serial.println("Reading ...");
@@ -33,7 +40,7 @@ void DayNight::readPhotoResistor() {
     Serial.print("Light is ");
   }
 
-  if(_pinPhotoResistorLecture < _threshold) {
+  if(_pinPhotoResistorLecture > _threshold) {
     if(_debug) {
       Serial.println("ON");
     }

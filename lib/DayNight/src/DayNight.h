@@ -10,6 +10,7 @@ class DayNight
     void updateStatus();
     void setPosition(int position);
     void setDebug(bool debug);
+    String isDay();
     void setUp();
   private:
     int _pinServo;

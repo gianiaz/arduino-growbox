@@ -83,14 +83,22 @@ void HumidityCO2Relay::calculateToleranceValue() {
 void HumidityCO2Relay::updateStatus() {
 
   if(millis() > _thick && (millis() - _thick) > _startTime) {
+    _startTime = millis();
     readTemperatureAndHumidity();
-    if(_humidity > (_humidityThreshold + _toleranceValue)) {
+    if(_humidity > (_humidityThreshold + 5)) {
       activateFans(true);
     } else {
-      if (_humidity < (_humidityThreshold - _toleranceValue)) {
+      if (_humidity < (_humidityThreshold - 5)) {
         activateFans(false);
       }
     }
-    _startTime = millis();
+  } else {
+    // Serial.println();
+    // Serial.println();
+    // Serial.println();
+    // Serial.println();
+    // int prova =  int(_thick);
+    // int prova2 = int(_startTime);
+    // Serial.println(String(millis())+", "+prova + ", "+prova2);
   }
 }

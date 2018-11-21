@@ -8,15 +8,15 @@ Hygrometer::Hygrometer(uint8_t pin, int secondsDelayBetwenLectures)
   _pin = pin;
   _milliseconds_delay_betwen_lectures = secondsDelayBetwenLectures * 1000;
   _last_lecture_time = 0;
-  _last_lecture = -1;
+  _last_lecture = 0;
 }
 
 void Hygrometer::setUp(bool debug) {
   _debug = debug;
 }
 
-int Hygrometer::getHumidity() {
-  return _last_lecture;
+String Hygrometer::getHumidity() {
+  return String(_last_lecture);
 }
 
 void Hygrometer::updateStatus() {

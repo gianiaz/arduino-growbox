@@ -8,17 +8,20 @@
 #include <LcdWrapper.h>
 #include <Time.h>
 #include <Button.h>
+#include <Hygrometer.h>
+#include <SerialSender.h>
 
 #define LED_RED_STATUS_PIN 3
 #define LED_RED_STATUS_DATA 4
 #define DAY_NIGHT_PIN_SERVO 10
 #define DAY_NIGHT_PIN_RESISTOR A0
-#define DAY_NIGHT_PIN_SERVO 10
 #define HUMIDITY_TEMPERATURE_RELAY_PIN 6
 #define HUMIDITY_TEMPERATURE_DHT_PIN 5
 #define MODE_BUTTON_PIN 7
 #define PLUS_BUTTON_PIN 8
 #define MINUS_BUTTON_PIN 9
+#define HYGROMETER1_PIN A1
+#define HYGROMETER2_PIN A2
 
 
 #define MENU_COPYRIGHT      0
@@ -32,14 +35,19 @@ String line1;
 String line2;
 LedLib ledRedStatus(LED_RED_STATUS_PIN);
 LedLib ledRedData(LED_RED_STATUS_DATA);
-DayNight disk(DAY_NIGHT_PIN_SERVO, DAY_NIGHT_PIN_RESISTOR, 500);
-HumidityCO2Relay temperatureControl(HUMIDITY_TEMPERATURE_DHT_PIN, HUMIDITY_TEMPERATURE_RELAY_PIN, 40);
+DayNight disk(DAY_NIGHT_PIN_SERVO, DAY_NIGHT_PIN_RESISTOR, 400);
+HumidityCO2Relay temperatureControl(HUMIDITY_TEMPERATURE_DHT_PIN, HUMIDITY_TEMPERATURE_RELAY_PIN, 70);
 LcdWrapper lcd;
 Button modeButton(MODE_BUTTON_PIN, 1000);
 Button plusButton(PLUS_BUTTON_PIN, 1000);
 Button minusButton(MINUS_BUTTON_PIN, 1000);
+Hygrometer hygrometer1(HYGROMETER1_PIN, 600);
+Hygrometer hygrometer2(HYGROMETER2_PIN, 600);
+SerialSender ser(9600, 30000);
+
 int position = 0;
 bool modifiersButtonActive = false;
+
 void printMenu() {
   switch (actualMenuEntry) {
     case MENU_COPYRIGHT:
@@ -54,17 +62,17 @@ void printMenu() {
     break;
     case MENU_HYGROMETERS:
       line1 = "Hygrometers:";
-      line2 = "NOTHING TO SHOW";
+      line2 = "H1: "+hygrometer1.getHumidity()+" - H2: "+hygrometer2.getHumidity();
       lcd.printLines(line1, line2);
       modifiersButtonActive = false;
     break;
     case MENU_MODIFY_UMIDITY:
       line1 = "Hum. threshold";
-      line2 = "Actual: "+String(temperatureControl.getHumidityThreshold());
+      line2 = "Actual: "+String(temperatureControl.getHumidityThreshold())+"%";
       lcd.printLines(line1, line2);
       modifiersButtonActive = true;
     break;
-    deault:
+    default:
       Serial.println("Di qua non dovrei passarci");
   }
 }
@@ -99,27 +107,39 @@ void add() {
 }
 
 void setup() {
+  ser.setUp(true);
+  disk.setUp();
+  disk.setDebug(false);
+  hygrometer1.setUp(false);
+  hygrometer1.setUp(false);
+  lcd.setUp(false);
+  ledRedStatus.powerOn();
+  minusButton.setUp(false);
   modeButton.setUp(false);
   plusButton.setUp(false);
-  minusButton.setUp(false);
-  Serial.begin(9600);
-  disk.setDebug(false);
-  disk.setUp();
-  temperatureControl.setUp(false);
-  ledRedData.blink(10, 50);
-  ledRedStatus.powerOn();
-  lcd.setUp(true);
+  temperatureControl.setUp(true);
   printMenu();
 }
 
 void loop() {
+  String dataToBeSent = temperatureControl.getTemperature()+"|";
+  dataToBeSent += temperatureControl.getHumidity()+"|";
+  dataToBeSent += disk.isDay()+"|";
+  dataToBeSent += hygrometer1.getHumidity()+"|";
+  dataToBeSent += hygrometer2.getHumidity();
+  if(ser.updateStatus(dataToBeSent)) {
+    ledRedData.blink(1, 50);
+  }
+
   ledRedData.updateStatus();
   ledRedStatus.updateStatus();
   temperatureControl.updateStatus();
   disk.updateStatus();
+  hygrometer1.updateStatus();
+  hygrometer2.updateStatus();
 
   if(modeButton.isPressed()) {
-    Serial.println("Clicked");
+    //Serial.println("Clicked");
     actualMenuEntry++;
     if(actualMenuEntry > 3) {
       actualMenuEntry = 0;

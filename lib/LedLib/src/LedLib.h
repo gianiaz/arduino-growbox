@@ -5,7 +5,7 @@ class LedLib
 {
   public:
     LedLib(int pin);
-    void blink(int duration, int impulse);
+    void blink(unsigned long duration, unsigned long impulse);
     void powerOff();
     void powerOn();
     void updateStatus();
@@ -16,8 +16,8 @@ class LedLib
     bool _debug;
     String _status;
     bool _isHigh;
-    unsigned int _blinkingImpulseTimeout;
-    int _impulse;
+    unsigned long _blinkingImpulseTimeout;
+    unsigned long _impulse;
     void toggle();
     void doPowerOff();
     void doPowerOn();
