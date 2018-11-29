@@ -22,8 +22,8 @@ class HumidityCO2Relay
     int _pinRelay;
     bool _debug;
     DHT_Unified _dht;
-    double _temperature;
-    double _humidity;
+    float _temperature;
+    float _humidity;
     int _humidityThreshold;
     int _tolerance;
     int _toleranceValue;

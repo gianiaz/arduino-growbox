@@ -31,19 +31,19 @@
 #define MENU_MODIFY_TEMPERATURE 4
 
 int actualMenuEntry = 0;
+Button modeButton(MODE_BUTTON_PIN, 1000);
+Button plusButton(PLUS_BUTTON_PIN, 1000);
+Button minusButton(MINUS_BUTTON_PIN, 1000);
 String line1;
 String line2;
 LedLib ledRedStatus(LED_RED_STATUS_PIN);
 LedLib ledRedData(LED_RED_STATUS_DATA);
-DayNight disk(DAY_NIGHT_PIN_SERVO, DAY_NIGHT_PIN_RESISTOR, 400);
+DayNight disk(DAY_NIGHT_PIN_SERVO, DAY_NIGHT_PIN_RESISTOR, 400, 60000);
 HumidityCO2Relay temperatureControl(HUMIDITY_TEMPERATURE_DHT_PIN, HUMIDITY_TEMPERATURE_RELAY_PIN, 70);
 LcdWrapper lcd;
-Button modeButton(MODE_BUTTON_PIN, 1000);
-Button plusButton(PLUS_BUTTON_PIN, 1000);
-Button minusButton(MINUS_BUTTON_PIN, 1000);
-Hygrometer hygrometer1(HYGROMETER1_PIN, 600);
-Hygrometer hygrometer2(HYGROMETER2_PIN, 600);
-SerialSender ser(9600, 30000);
+Hygrometer hygrometer1(HYGROMETER1_PIN, 3600);
+Hygrometer hygrometer2(HYGROMETER2_PIN, 3600);
+SerialSender ser(9600, 10000);
 
 int position = 0;
 bool modifiersButtonActive = false;
@@ -62,7 +62,7 @@ void printMenu() {
     break;
     case MENU_HYGROMETERS:
       line1 = "Hygrometers:";
-      line2 = "H1: "+hygrometer1.getHumidity()+" - H2: "+hygrometer2.getHumidity();
+      line2 = "H1:"+hygrometer1.getHumidity()+" - H2:"+hygrometer2.getHumidity();
       lcd.printLines(line1, line2);
       modifiersButtonActive = false;
     break;
@@ -108,16 +108,17 @@ void add() {
 
 void setup() {
   ser.setUp(true);
-  disk.setUp();
-  disk.setDebug(false);
-  hygrometer1.setUp(false);
-  hygrometer1.setUp(false);
+  disk.setUp(true, false);
+  hygrometer1.setUp(true, false);
+  hygrometer2.setUp(true, false);
   lcd.setUp(false);
+  ledRedStatus.setUp(true, false);
+  ledRedData.setUp(true, false);
   ledRedStatus.powerOn();
   minusButton.setUp(false);
   modeButton.setUp(false);
   plusButton.setUp(false);
-  temperatureControl.setUp(true);
+  temperatureControl.setUp(false);
   printMenu();
 }
 

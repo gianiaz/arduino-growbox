@@ -6,21 +6,23 @@
 class DayNight
 {
   public:
-    DayNight(int pinServo, unsigned char pinPhotoResistor, int threshold);
+    DayNight(int pinServo, unsigned char pinPhotoResistor, int threshold, unsigned long bounce);
     void updateStatus();
     void setPosition(int position);
-    void setDebug(bool debug);
     String isDay();
-    void setUp();
+    void setUp(bool active, bool debug);
   private:
     int _pinServo;
     unsigned char _pinPhotoResistor;
     Servo _servo;
     int _millis;
+    unsigned long _bounce;
+    unsigned long _lastLecture;
     String _status;
     int _threshold;
     int _debug;
     int _pinPhotoResistorLecture;
+    bool _active;
     void readPhotoResistor();
     void night();
     void day();

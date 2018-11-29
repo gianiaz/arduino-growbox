@@ -9,13 +9,14 @@ class LedLib
     void powerOff();
     void powerOn();
     void updateStatus();
-    void setDebug(bool debug);
+    void setUp(bool active , bool debug);
   private:
     int _pin;
     unsigned int _expire;
     bool _debug;
     String _status;
     bool _isHigh;
+    bool _active;
     unsigned long _blinkingImpulseTimeout;
     unsigned long _impulse;
     void toggle();

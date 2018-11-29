@@ -7,8 +7,6 @@
 LedLib::LedLib(int pin)
 {
   _pin = pin;
-  pinMode(_pin, OUTPUT);
-  Serial.println("LedLib initialized with pin "+_pin);
   _debug = false;
   _expire = 0;
   _status = "OFF";
@@ -16,16 +14,17 @@ LedLib::LedLib(int pin)
   _blinkingImpulseTimeout = 0;
   _impulse = 200;
   _debug = false;
-  Serial.print("Debug ");
-  if(_debug) {
-    Serial.print("ACTIVE");
-  } else {
-    Serial.print("INACTIVE");
-  }
-  Serial.println();
 }
 
-void setUp() {
+void LedLib::setUp(bool active, bool debug) {
+  _active = active;
+  _debug = debug;
+  if(_debug) {
+    Serial.println("LedLib initialized with pin "+_pin);
+  }
+  if(_active) {
+    pinMode(_pin, OUTPUT);
+  }
 
 }
 
@@ -79,12 +78,10 @@ void LedLib::doPowerOff()
   if(_debug) {
     Serial.print("DO Power OFF (PIN: "+String(_pin)+")");
   }
-  digitalWrite(_pin, LOW);
+  if(_active) {
+    digitalWrite(_pin, LOW);
+  }
   _isHigh = false;
-}
-
-void LedLib::setDebug(bool debug) {
-  _debug = debug;
 }
 
 void LedLib::doPowerOn()
@@ -92,7 +89,9 @@ void LedLib::doPowerOn()
   if(_debug) {
     Serial.println("DO Power ON ("+String(_pin)+")");
   }
-  digitalWrite(_pin, HIGH);
+  if(_active) {
+    digitalWrite(_pin, HIGH);
+  }
   _isHigh = true;
 }
 

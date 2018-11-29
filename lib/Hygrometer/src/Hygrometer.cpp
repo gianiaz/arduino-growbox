@@ -11,8 +11,15 @@ Hygrometer::Hygrometer(uint8_t pin, int secondsDelayBetwenLectures)
   _last_lecture = 0;
 }
 
-void Hygrometer::setUp(bool debug) {
+void Hygrometer::setUp(bool active, bool debug) {
+  _active = active;
   _debug = debug;
+  if(_active) {
+    doRead();
+    if(_debug) {
+      Serial.println("Debug attivo");
+    }
+  }
 }
 
 String Hygrometer::getHumidity() {
@@ -21,18 +28,29 @@ String Hygrometer::getHumidity() {
 
 void Hygrometer::updateStatus() {
 
-  if(millis() > _milliseconds_delay_betwen_lectures && (millis() - _milliseconds_delay_betwen_lectures) > _last_lecture_time) {
+  if((_last_lecture_time + _milliseconds_delay_betwen_lectures) < millis()) {
     _last_lecture_time = millis();
     if(_debug) {
       Serial.println("Reading...");
     }
-    _last_lecture = analogRead(_pin);		//Read analog value
-    _last_lecture = constrain(_last_lecture,400,1023);	//Keep the ranges!
-  	_last_lecture = map(_last_lecture,400,1023,100,0);	//Map value : 400 will be 100 and 1023 will be 0
+    doRead();
     if(_debug) {
       Serial.print("Soil humidity: ");
     	Serial.print(_last_lecture);
     	Serial.println("%");
     }
+  }
+
+}
+
+void Hygrometer::doRead() {
+  if(_active) {
+    _last_lecture = analogRead(_pin);		//Read analog value
+    if(_debug) {
+      Serial.print("Analog lecture: ");
+      Serial.println(_last_lecture);
+    }
+    _last_lecture = constrain(_last_lecture,400,1023);	//Keep the ranges!
+    _last_lecture = map(_last_lecture,400,1023,100,0);	//Map value : 400 will be 100 and 1023 will be 0
   }
 }
