@@ -5,7 +5,7 @@
 #include <DHT_U.h>
 #include <math.h>
 
-HumidityCO2Relay::HumidityCO2Relay(int pinDHT, int pinRelay, int threshold): _dht(pinDHT, DHT11, 6)
+HumidityCO2Relay::HumidityCO2Relay(int pinDHT, int pinRelay, int threshold): _dht(pinDHT, DHT22, 6)
 {
   _pinRelay = pinRelay;
   _pinDHT = pinDHT;
