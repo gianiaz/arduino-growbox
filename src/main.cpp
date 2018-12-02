@@ -22,7 +22,7 @@
 #define MINUS_BUTTON_PIN 9
 #define HYGROMETER1_PIN A1
 #define HYGROMETER2_PIN A2
-
+#define MENU_UPDATE_BOUNCETIME 5000
 
 #define MENU_COPYRIGHT      0
 #define MENU_TEMPERATURE    1
@@ -39,7 +39,7 @@ String line2;
 LedLib ledRedStatus(LED_RED_STATUS_PIN);
 LedLib ledRedData(LED_RED_STATUS_DATA);
 DayNight disk(DAY_NIGHT_PIN_SERVO, DAY_NIGHT_PIN_RESISTOR, 400, 60000);
-HumidityCO2Relay temperatureControl(HUMIDITY_TEMPERATURE_DHT_PIN, HUMIDITY_TEMPERATURE_RELAY_PIN, 70);
+HumidityCO2Relay temperatureControl(HUMIDITY_TEMPERATURE_DHT_PIN, HUMIDITY_TEMPERATURE_RELAY_PIN, 75);
 LcdWrapper lcd;
 Hygrometer hygrometer1(HYGROMETER1_PIN, 3600);
 Hygrometer hygrometer2(HYGROMETER2_PIN, 3600);
@@ -47,6 +47,7 @@ SerialSender ser(9600, 10000);
 
 int position = 0;
 bool modifiersButtonActive = false;
+float lastScreenUpdate = millis();
 
 void printMenu() {
   switch (actualMenuEntry) {
@@ -154,5 +155,9 @@ void loop() {
     if(minusButton.isPressed()) {
       substract();
     }
+  }
+  if((lastScreenUpdate + float(MENU_UPDATE_BOUNCETIME)) < millis()) {
+    lastScreenUpdate = millis();
+    printMenu();
   }
 }
