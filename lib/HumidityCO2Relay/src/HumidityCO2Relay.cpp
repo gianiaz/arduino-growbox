@@ -5,10 +5,11 @@
 #include <DHT_U.h>
 #include <math.h>
 
-HumidityCO2Relay::HumidityCO2Relay(int pinDHT, int pinRelay, int threshold): _dht(pinDHT, DHT22, 6)
+HumidityCO2Relay::HumidityCO2Relay(int pinDHT, int pinRelay, int pinHumidifier, int threshold): _dht(pinDHT, DHT22, 6)
 {
   _pinRelay = pinRelay;
   _pinDHT = pinDHT;
+  _pinHumidifier = pinHumidifier;
   _debug = false;
   _tolerance = 5;
   _humidityThreshold = threshold;
@@ -37,6 +38,8 @@ String HumidityCO2Relay::getHumidity() {
 void HumidityCO2Relay::setUp(bool debug) {
   _debug = debug;
   pinMode(_pinRelay, OUTPUT);
+  pinMode(_pinHumidifier, OUTPUT);
+  digitalWrite(_pinHumidifier, HIGH);
   if(_debug) {
     Serial.println("HumidityCO2Relay: DHT pin ("+String(_pinDHT)+"), Relay pin ("+String(_pinRelay)+")");
   }

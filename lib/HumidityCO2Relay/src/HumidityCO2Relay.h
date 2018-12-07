@@ -7,7 +7,7 @@
 class HumidityCO2Relay
 {
   public:
-    HumidityCO2Relay(int pinDHT, int pinRelay, int threshold);
+    HumidityCO2Relay(int pinDHT, int pinRelay, int pinHumidifier, int threshold);
     void setUp(bool debug);
     void updateStatus();
     void setHumidityThreshold(int threshold);
@@ -20,6 +20,7 @@ class HumidityCO2Relay
     void calculateToleranceValue();
     int _pinDHT;
     int _pinRelay;
+    int _pinHumidifier;
     bool _debug;
     DHT_Unified _dht;
     float _temperature;
