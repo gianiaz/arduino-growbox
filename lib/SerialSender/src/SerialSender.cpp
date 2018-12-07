@@ -19,7 +19,9 @@ void SerialSender::setUp(bool debug) {
 bool SerialSender::updateStatus(String data) {
   if(_lastOperation + _updateTimeout < millis()) {
     _lastOperation = millis();
-    Serial.println("[growbox]"+data+"[/growbox]");
+    if(!_debug) {
+      Serial.println("[growbox]"+data+"[/growbox]");
+    }
     return true;
   }
   return false;
