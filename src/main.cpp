@@ -18,6 +18,7 @@
 #define HUMIDITY_TEMPERATURE_FAN_PIN 6
 #define HUMIDITY_TEMPERATURE_DHT_PIN 5
 #define HUMIDITY_TEMPERATURE_HUMIDIFIER_PIN 11
+#define RELAY_LED_RGB_PIN 12
 #define MODE_BUTTON_PIN 7
 #define PLUS_BUTTON_PIN 8
 #define MINUS_BUTTON_PIN 9
@@ -28,8 +29,10 @@
 #define MENU_COPYRIGHT      0
 #define MENU_TEMPERATURE    1
 #define MENU_HYGROMETERS    2
-#define MENU_MODIFY_FAN_THRESHOLD 3
-#define MENU_MODIFY_HUMIDIFIER_THRESHOLD 4
+#define MENU_MODIFY_HUMIDIFIER_THRESHOLD 3
+#define MENU_MODIFY_FAN_THRESHOLD 4
+
+#define VERSION 1.3
 
 int actualMenuEntry = 0;
 Button modeButton(MODE_BUTTON_PIN, 1000);
@@ -37,7 +40,7 @@ Button plusButton(PLUS_BUTTON_PIN, 1000);
 Button minusButton(MINUS_BUTTON_PIN, 1000);
 LedLib ledRedStatus(LED_RED_STATUS_PIN);
 LedLib ledRedData(LED_RED_STATUS_DATA);
-DayNight disk(DAY_NIGHT_PIN_SERVO, DAY_NIGHT_PIN_RESISTOR, 400, 60000);
+DayNight disk(DAY_NIGHT_PIN_SERVO, DAY_NIGHT_PIN_RESISTOR, RELAY_LED_RGB_PIN, 400, 60000);
 HumidityTemperatureGuard temperatureControl(HUMIDITY_TEMPERATURE_DHT_PIN, HUMIDITY_TEMPERATURE_FAN_PIN, HUMIDITY_TEMPERATURE_HUMIDIFIER_PIN, 75, 60);
 LcdWrapper lcd;
 Hygrometer hygrometer1(HYGROMETER1_PIN, 3600);
@@ -53,7 +56,7 @@ void printMenu() {
   String line2;
   switch (actualMenuEntry) {
     case MENU_COPYRIGHT:
-      lcd.printLines("Growbox 1.1", "(c) gianiaz");
+      lcd.printLines("Growbox "+String(VERSION), "(c) gianiaz");
       modifiersButtonActive = false;
     break;
     case MENU_TEMPERATURE:
@@ -68,15 +71,15 @@ void printMenu() {
       lcd.printLines(line1, line2);
       modifiersButtonActive = false;
     break;
-    case MENU_MODIFY_FAN_THRESHOLD:
-      line1 = "Fan threshold";
-      line2 = "Actual: "+String(temperatureControl.getFanThreshold())+"%";
-      lcd.printLines(line1, line2);
-      modifiersButtonActive = true;
-    break;
     case MENU_MODIFY_HUMIDIFIER_THRESHOLD:
       line1 = "Humidifier threshold";
       line2 = "Actual: "+String(temperatureControl.getHumidifierThreshold())+"%";
+      lcd.printLines(line1, line2);
+      modifiersButtonActive = true;
+    break;
+    case MENU_MODIFY_FAN_THRESHOLD:
+      line1 = "Fan threshold";
+      line2 = "Actual: "+String(temperatureControl.getFanThreshold())+"%";
       lcd.printLines(line1, line2);
       modifiersButtonActive = true;
     break;
@@ -87,14 +90,14 @@ void printMenu() {
 
 void substract() {
   switch (actualMenuEntry) {
+    case MENU_MODIFY_HUMIDIFIER_THRESHOLD:
+    if(temperatureControl.getHumidifierThreshold() >= 5) {
+      temperatureControl.setHumidifierThreshold(temperatureControl.getHumidifierThreshold() - 5);
+    }
+    break;
     case MENU_MODIFY_FAN_THRESHOLD:
       if(temperatureControl.getFanThreshold() >= 5) {
         temperatureControl.setFanThreshold(temperatureControl.getFanThreshold() - 5);
-      }
-    break;
-    case MENU_MODIFY_HUMIDIFIER_THRESHOLD:
-      if(temperatureControl.getHumidifierThreshold() >= 5) {
-        temperatureControl.setHumidifierThreshold(temperatureControl.getHumidifierThreshold() - 5);
       }
     break;
   }
@@ -104,15 +107,15 @@ void substract() {
 
 void add() {
   switch (actualMenuEntry) {
+    case MENU_MODIFY_HUMIDIFIER_THRESHOLD:
+    if(temperatureControl.getHumidifierThreshold() <= 95) {
+      temperatureControl.setHumidifierThreshold(temperatureControl.getHumidifierThreshold() + 5);
+    }
     case MENU_MODIFY_FAN_THRESHOLD:
       if(temperatureControl.getFanThreshold() <= 95) {
-        temperatureControl.setFanThreshold(temperatureControl.getHumidifierThreshold() + 5);
+        temperatureControl.setFanThreshold(temperatureControl.getFanThreshold() + 5);
       }
     break;
-    case MENU_MODIFY_HUMIDIFIER_THRESHOLD:
-      if(temperatureControl.getHumidifierThreshold() <= 95) {
-        temperatureControl.setHumidifierThreshold(temperatureControl.getHumidifierThreshold() + 5);
-      }
     break;
   }
   printMenu();

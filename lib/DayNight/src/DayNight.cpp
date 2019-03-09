@@ -6,10 +6,11 @@
 const int DAY_POSITION = 3;
 const int NIGHT_POSITION = 168;
 
-DayNight::DayNight(int pinServo, unsigned char pinPhotoResistor, int threshold, unsigned long bounce)
+DayNight::DayNight(int pinServo, unsigned char pinPhotoResistor, unsigned char pinRelay, int threshold, unsigned long bounce)
 {
   _pinServo = pinServo;
   _pinPhotoResistor = pinPhotoResistor;
+  _pinRelay = pinRelay;
   _threshold = threshold;
   _status = "NIGHT";
   _millis = 0;
@@ -25,6 +26,7 @@ void DayNight::setUp(bool active, bool debug) {
   }
   if(_active) {
     pinMode(_pinPhotoResistor, INPUT);
+    pinMode(_pinRelay, OUTPUT);
     _servo.attach(_pinServo);
     _servo.write(NIGHT_POSITION);
   }
@@ -55,11 +57,13 @@ void DayNight::readPhotoResistor() {
     if(_debug) {
       Serial.println("ON");
     }
+    digitalWrite(_pinRelay, HIGH);
     day();
   } else {
     if(_debug) {
       Serial.println("OFF");
     }
+    digitalWrite(_pinRelay, LOW);
     night();
   }
 
